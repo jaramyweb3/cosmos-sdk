@@ -672,10 +672,11 @@ func bz(s string) []byte { return []byte(s) }
 func BenchmarkCacheKVStoreGetNoKeyFound(b *testing.B) {
 	b.ReportAllocs()
 	st := newCacheKVStore()
-	b.ResetTimer()
 	// assumes b.N < 2**24
-	for i := 0; i < b.N; i++ {
+	var i int
+	for b.Loop() {
 		st.Get([]byte{byte((i & 0xFF0000) >> 16), byte((i & 0xFF00) >> 8), byte(i & 0xFF)})
+		i++
 	}
 }
 
@@ -688,7 +689,9 @@ func BenchmarkCacheKVStoreGetKeyFound(b *testing.B) {
 	}
 	b.ResetTimer()
 	// assumes b.N < 2**24
-	for i := 0; i < b.N; i++ {
-		st.Get([]byte{byte((i & 0xFF0000) >> 16), byte((i & 0xFF00) >> 8), byte(i & 0xFF)})
+	var j int
+	for b.Loop() {
+		st.Get([]byte{byte((j & 0xFF0000) >> 16), byte((j & 0xFF00) >> 8), byte(j & 0xFF)})
+		j++
 	}
 }

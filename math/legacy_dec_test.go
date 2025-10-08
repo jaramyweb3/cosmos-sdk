@@ -642,9 +642,8 @@ func BenchmarkMarshalTo(b *testing.B) {
 	data := make([]byte, 100)
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, bi := range bis {
 			if n, err := bi.in.MarshalTo(data); err != nil {
 				b.Fatal(err)
@@ -661,8 +660,8 @@ func BenchmarkLegacyQuoMut(b *testing.B) {
 	b1 := math.LegacyNewDec(17e2 + 8371)
 	b2 := math.LegacyNewDec(4371)
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for b.Loop() {
 		sink = b1.QuoMut(b2)
 	}
 
@@ -674,15 +673,12 @@ func BenchmarkLegacyQuoMut(b *testing.B) {
 
 func BenchmarkLegacyQuoTruncateMut(b *testing.B) {
 	b1 := math.LegacyNewDec(17e2 + 8371)
-	baseArr := make([]math.LegacyDec, b.N)
-	for i := 0; i < b.N; i++ {
-		baseArr[i] = b1.Clone()
-	}
 	b2 := math.LegacyNewDec(4371)
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sink = baseArr[i].QuoTruncateMut(b2)
+
+	for b.Loop() {
+		val := b1.Clone()
+		sink = val.QuoTruncateMut(b2)
 	}
 
 	if sink == nil {
@@ -694,8 +690,8 @@ func BenchmarkLegacyQuoTruncateMut(b *testing.B) {
 func BenchmarkLegacySqrtOnMersennePrime(b *testing.B) {
 	b1 := math.LegacyNewDec(2).Power(127).Sub(math.LegacyOneDec())
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for b.Loop() {
 		sink, _ = b1.ApproxSqrt()
 	}
 
@@ -707,15 +703,12 @@ func BenchmarkLegacySqrtOnMersennePrime(b *testing.B) {
 
 func BenchmarkLegacyQuoRoundupMut(b *testing.B) {
 	b1 := math.LegacyNewDec(17e2 + 8371)
-	baseArr := make([]math.LegacyDec, b.N)
-	for i := 0; i < b.N; i++ {
-		baseArr[i] = b1.Clone()
-	}
 	b2 := math.LegacyNewDec(4371)
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sink = baseArr[i].QuoRoundupMut(b2)
+
+	for b.Loop() {
+		val := b1.Clone()
+		sink = val.QuoRoundupMut(b2)
 	}
 
 	if sink == nil {
@@ -1320,7 +1313,7 @@ func BenchmarkIsInValidRange(b *testing.B) {
 	}
 	for name, source := range specs {
 		b.Run(name, func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
+			for b.Loop() {
 				_ = source.IsInValidRange()
 			}
 		})

@@ -84,12 +84,12 @@ func BenchmarkLoggers(b *testing.B) {
 	b.Run("zerolog", func(b *testing.B) {
 		for _, bc := range benchCases {
 			b.Run(bc.name, func(b *testing.B) {
-				zl := zerolog.New(io.Discard)
-				logger := log.NewCustomLogger(zl)
+			zl := zerolog.New(io.Discard)
+			logger := log.NewCustomLogger(zl)
 
-				for i := 0; i < b.N; i++ {
-					logger.Info(message, bc.keyVals...)
-				}
+			for b.Loop() {
+				logger.Info(message, bc.keyVals...)
+			}
 			})
 		}
 	})
@@ -99,11 +99,11 @@ func BenchmarkLoggers(b *testing.B) {
 	b.Run("specialized nop logger", func(b *testing.B) {
 		for _, bc := range nopCases {
 			b.Run(bc.name, func(b *testing.B) {
-				logger := log.NewNopLogger()
+			logger := log.NewNopLogger()
 
-				for i := 0; i < b.N; i++ {
-					logger.Info(message, bc.keyVals...)
-				}
+			for b.Loop() {
+				logger.Info(message, bc.keyVals...)
+			}
 			})
 		}
 	})
@@ -114,11 +114,11 @@ func BenchmarkLoggers(b *testing.B) {
 	b.Run("zerolog nop logger", func(b *testing.B) {
 		for _, bc := range nopCases {
 			b.Run(bc.name, func(b *testing.B) {
-				logger := log.NewCustomLogger(zerolog.Nop())
+			logger := log.NewCustomLogger(zerolog.Nop())
 
-				for i := 0; i < b.N; i++ {
-					logger.Info(message, bc.keyVals...)
-				}
+			for b.Loop() {
+				logger.Info(message, bc.keyVals...)
+			}
 			})
 		}
 	})
@@ -134,7 +134,7 @@ func BenchmarkLoggers_StructuredVsFields(b *testing.B) {
 		zl := zerolog.New(io.Discard)
 		logger := log.NewCustomLogger(zl)
 		zerolog := logger.Impl().(*zerolog.Logger)
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			zerolog.Info().Int64("foo", 100000).Msg(message)
 			zerolog.Info().Str("foo", "foo").Msg(message)
 			zerolog.Error().
@@ -149,7 +149,7 @@ func BenchmarkLoggers_StructuredVsFields(b *testing.B) {
 	b.Run("logger", func(b *testing.B) {
 		zl := zerolog.New(io.Discard)
 		logger := log.NewCustomLogger(zl)
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			logger.Info(message, "foo", 100000)
 			logger.Info(message, "foo", "foo")
 			logger.Error(message, "foo", 100000, "bar", "foo", "other", byteSliceToLog, "error", errorToLog)

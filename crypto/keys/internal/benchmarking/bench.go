@@ -18,7 +18,7 @@ import (
 // a dummy reader.
 func BenchmarkKeyGeneration(b *testing.B, generateKey func(reader io.Reader) types.PrivKey) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		generateKey(rand.Reader)
 	}
 }
@@ -27,8 +27,7 @@ func BenchmarkKeyGeneration(b *testing.B, generateKey func(reader io.Reader) typ
 // the provided privkey.
 func BenchmarkSigning(b *testing.B, priv types.PrivKey) {
 	message := []byte("Hello, world!")
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, err := priv.Sign(message)
 		if err != nil {
 			b.FailNow()
@@ -46,8 +45,7 @@ func BenchmarkVerification(b *testing.B, priv types.PrivKey) {
 	if err != nil {
 		b.Fatal(err)
 	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		pub.VerifySignature(message, signature)
 	}
 }
